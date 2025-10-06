@@ -35,9 +35,10 @@ jobs:
           make info
           # فرض کنیم پروفایل مناسب لینکسیس WHW03 V2 این باشد:
           PROFILE_NAME="linksys_whw03v2"
-          make image PROFILE="$PROFILE_NAME" \
-            PACKAGES="luci luci-compat luci-app-passwall luci-app-passwall2 luci-app-openvpn luci-app-wireguard luci-app-wol luci-app-openconnect luci-app-amnezia luci-theme-bootstrap" \
-            FILES=files/
+          make image PROFILE="ipq40xx-generic" \
+          PACKAGES="luci luci-compat luci-app-passwall luci-app-passwall2 luci-app-openvpn luci-app-wireguard luci-app-wol luci-app-openconnect luci-app-amnezia luci-theme-bootstrap" \
+          FILES=files/
+
 
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
