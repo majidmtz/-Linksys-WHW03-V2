@@ -1,0 +1,117 @@
+# PassWall2 default profile (imported on first boot)
+
+config global
+        option enabled '0'
+        option node_socks_port '1070'
+        option localhost_proxy '1'
+        option client_proxy '1'
+        option socks_enabled '0'
+        option acl_enable '0'
+        option node 'myshunt'
+        option direct_dns_protocol 'auto'
+        option direct_dns_query_strategy 'UseIP'
+        option remote_dns_protocol 'tcp'
+        option remote_dns '1.1.1.1'
+        option remote_dns_query_strategy 'UseIPv4'
+        list dns_hosts 'cloudflare-dns.com 1.1.1.1'
+        list dns_hosts 'dns.google.com 8.8.8.8'
+        option log_node '1'
+        option loglevel 'error'
+
+config global_haproxy
+        option balancing_enable '0'
+
+config global_delay
+        option start_daemon '1'
+        option start_delay '60'
+
+config global_forwarding
+        option tcp_no_redir_ports 'disable'
+        option udp_no_redir_ports 'disable'
+        option tcp_redir_ports '1:65535'
+        option udp_redir_ports '1:65535'
+        option accept_icmp '0'
+        option use_nft '0'
+        option tcp_proxy_way 'redirect'
+        option ipv6_tproxy '0'
+
+config global_xray
+        option sniffing_override_dest '0'
+
+config global_other
+        option auto_detection_time 'tcping'
+        option show_node_info '0'
+
+config global_rules
+        option auto_update '0'
+        option geosite_update '1'
+        option geoip_update '1'
+        option v2ray_location_asset '/usr/share/v2ray/'
+        option enable_geoview '1'
+
+config global_app
+        option xray_file '/usr/bin/xray'
+        option hysteria_file '/usr/bin/hysteria'
+        option singbox_file '/usr/bin/sing-box'
+
+config global_subscribe
+        option filter_keyword_mode '1'
+        list filter_discard_list '距离下次重置剩余'
+        list filter_discard_list '套餐到期'
+        list filter_discard_list '过期时间'
+        list filter_discard_list '剩余流量'
+        list filter_discard_list 'QQ群'
+        list filter_discard_list '官网'
+
+config global_singbox
+        option sniff_override_destination '0'
+        option geoip_path '/usr/share/singbox/geoip.db'
+        option geoip_url 'https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geoip.db'
+        option geosite_path '/usr/share/singbox/geosite.db'
+        option geosite_url 'https://github.com/MetaCubeX/meta-rules-dat/releases/download/latest/geosite.db'
+
+config nodes 'myshunt'
+        option remarks 'Iran Routing'
+        option type 'Xray'
+        option protocol '_shunt'
+        option default_node '_direct'
+        option domainStrategy 'IPOnDemand'
+        option domainMatcher 'hybrid'
+        option preproxy_enabled '0'
+        option Direct '_direct'
+
+config shunt_rules 'Direct'
+        option remarks 'IRAN'
+        option network 'tcp,udp'
+        option domain_list 'regexp:^.+\.ir$
+geosite:category-ir
+kifpool.me'
+        option ip_list 'geoip:ir
+0.0.0.0/8
+10.0.0.0/8
+100.64.0.0/10
+127.0.0.0/8
+169.254.0.0/16
+172.16.0.0/12
+192.0.0.0/24
+192.0.2.0/24
+192.88.99.0/24
+192.168.0.0/16
+198.19.0.0/16
+198.51.100.0/24
+203.0.113.0/24
+224.0.0.0/4
+240.0.0.0/4
+255.255.255.255/32
+::/128
+::1/128
+::ffff:0:0:0/96
+64:ff9b::/96
+100::/64
+2001::/32
+2001:20::/28
+2001:db8::/32
+2002::/16
+fc00::/7
+fe80::/10
+ff00::/8'
