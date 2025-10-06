@@ -31,9 +31,10 @@ jobs:
       - name: Build firmware
         run: |
           cd imagebuilder
-          make image PROFILE="linksys_whw03_v2" \
-            PACKAGES="luci luci-compat luci-app-passwall luci-app-passwall2 luci-app-openvpn luci-app-wireguard luci-app-wol luci-app-openconnect luci-app-amnezia luci-theme-bootstrap" \
-            FILES=files/
+          make image PROFILE="linksys_whw03-v2" \
+          PACKAGES="luci luci-compat luci-app-passwall luci-app-passwall2 luci-app-openvpn luci-app-wireguard luci-app-wol luci-app-openconnect luci-app-amnezia luci-theme-bootstrap" \
+          FILES=files/
+
 
       - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
