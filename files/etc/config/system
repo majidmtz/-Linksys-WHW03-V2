@@ -1,0 +1,5 @@
+config system
+	option hostname 'Iranopenwrt'
+	option zonename 'Asia/Tehran'
+	option timezone '<+0330>-3:30'
+	option notes 'contact me:🌏https://t.me/Macid_mtz'
