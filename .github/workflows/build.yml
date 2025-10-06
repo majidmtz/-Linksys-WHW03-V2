@@ -20,7 +20,7 @@ jobs:
       - name: Copy custom files
         run: |
           mkdir -p imagebuilder/files
-          cp -r files/* imagebuilder/files/
+          cp -r files/* imagebuilder/files/ || true
 
       - name: Build firmware
         run: |
