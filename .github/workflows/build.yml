@@ -1,10 +1,10 @@
-name: Customize OpenWrt Firmware
+name: Build Custom OpenWrt Firmware (WHW03 V2)
 
 on:
   workflow_dispatch:
 
 jobs:
-  customize-firmware:
+  build:
     runs-on: ubuntu-latest
 
     steps:
@@ -14,40 +14,33 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y squashfs-tools binwalk wget xz-utils
+          sudo apt-get install -y zstd xz-utils
 
-      - name: Download raw OpenWrt firmware
+      - name: Download OpenWrt ImageBuilder 24.10.0-rc4
         run: |
-          wget -O openwrt-whw03v2.bin https://downloads.openwrt.org/releases/24.10.3/targets/ipq40xx/generic/openwrt-24.10.3-ipq40xx-generic-linksys_whw03v2-squashfs-sysupgrade.bin
+          wget https://downloads.openwrt.org/releases/24.10.0-rc4/targets/ipq40xx/generic/openwrt-imagebuilder-24.10.0-rc4-ipq40xx-generic.Linux-x86_64.tar.zst
+          unzstd openwrt-imagebuilder-*.tar.zst
+          tar -xf openwrt-imagebuilder-*.tar
+          mv openwrt-imagebuilder-24.10.0-rc4-ipq40xx-generic.Linux-x86_64 imagebuilder
 
-      - name: Extract firmware
+      - name: Copy custom files
         run: |
-          mkdir rootfs
-          mkdir mnt
-          # extract squashfs from sysupgrade
-          binwalk -e openwrt-whw03v2.bin
-          # locate squashfs file (معمولاً _squashfs.bin)
-          SQFS=$(find _openwrt-whw03v2.bin.extracted -name "*squashfs.bin" | head -n1)
-          sudo mount -o loop $SQFS mnt
+          mkdir -p imagebuilder/files
+          cp -r files/* imagebuilder/files/
 
-      - name: Apply custom files
+      - name: Build firmware
         run: |
-          sudo cp -r files/* mnt/
-          # اگر نیاز به مجوز فایل‌ها است:
-          sudo chown -R root:root mnt/
+          cd imagebuilder
+          # ابتدا پروفایل‌ها را ببینیم
+          make info
+          # فرض کنیم پروفایل مناسب لینکسیس WHW03 V2 این باشد:
+          PROFILE_NAME="linksys_whw03v2"
+          make image PROFILE="$PROFILE_NAME" \
+            PACKAGES="luci luci-compat luci-app-passwall luci-app-passwall2 luci-app-openvpn luci-app-wireguard luci-app-wol luci-app-openconnect luci-app-amnezia luci-theme-bootstrap" \
+            FILES=files/
 
-      - name: Repack firmware
-        run: |
-          # unmount
-          sudo umount mnt
-          # rebuild squashfs
-          mksquashfs mnt rootfs-custom.squashfs -comp xz
-          # merge با header sysupgrade (نیاز به اسکریپت پیشرفته برای مطابقت با sysupgrade)
-          # ساده ترین روش: فایل squashfs جدید را جایگزین squashfs قدیمی با binwalk و dd
-          echo "⚠️ مرحله merge squashfs با header نیاز به اسکریپت دقیق دارد"
-
-      - name: Upload custom firmware
+      - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
           name: firmware
-          path: rootfs-custom.squashfs
+          path: imagebuilder/bin/targets/ipq40xx/generic/*.bin
