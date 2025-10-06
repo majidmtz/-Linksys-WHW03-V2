@@ -11,26 +11,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Download OpenWrt ImageBuilder
+      - name: Download OpenWrt ImageBuilder 24.10.0
         run: |
-          wget https://downloads.openwrt.org/releases/24.10.3/targets/ipq40xx/generic/openwrt-imagebuilder-24.10.3-ipq40xx-generic.Linux-x86_64.tar.xz
+          wget https://downloads.openwrt.org/releases/24.10.0/targets/ipq40xx/generic/openwrt-imagebuilder-24.10.0-ipq40xx-generic.Linux-x86_64.tar.xz
           tar -xf openwrt-imagebuilder-*.tar.xz
           mv openwrt-imagebuilder-* imagebuilder
 
       - name: Copy custom files
         run: |
-          mkdir -p imagebuilder/files
-          cp -r files/* imagebuilder/files/ || true
-
-      - name: Build firmware
-        run: |
-          cd imagebuilder
-          make image PROFILE="linksys_whw03_v2" \
-            PACKAGES="luci luci-compat luci-app-passwall luci-app-passwall2 luci-app-openvpn luci-app-wireguard luci-app-wol luci-app-openconnect luci-app-amnezia luci-theme-bootstrap" \
-            FILES=files/
-
-      - name: Upload firmware
-        uses: actions/upload-artifact@v4
-        with:
-          name: firmware
-          path: imagebuilder/bin/targets/ipq40xx/generic/*.bin
