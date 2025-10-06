@@ -19,3 +19,18 @@ jobs:
 
       - name: Copy custom files
         run: |
+          mkdir -p imagebuilder/files
+          cp -r files/* imagebuilder/files/ || true
+
+      - name: Build firmware
+        run: |
+          cd imagebuilder
+          make image PROFILE="linksys_whw03_v2" \
+            PACKAGES="luci luci-compat luci-app-passwall luci-app-passwall2 luci-app-openvpn luci-app-wireguard luci-app-wol luci-app-openconnect luci-app-amnezia luci-theme-bootstrap" \
+            FILES=files/
+
+      - name: Upload firmware
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware
+          path: imagebuilder/bin/targets/ipq40xx/generic/*.bin
