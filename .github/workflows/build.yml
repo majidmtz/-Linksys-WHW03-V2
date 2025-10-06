@@ -8,19 +8,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Download OpenWrt ImageBuilder 24.10.0
+      - name: Install dependencies
         run: |
-          wget https://downloads.openwrt.org/releases/24.10.0/targets/ipq40xx/generic/openwrt-imagebuilder-24.10.0-ipq40xx-generic.Linux-x86_64.tar.xz
+          sudo apt-get update
+          sudo apt-get install -y xz-utils zstd
+
+      - name: Download OpenWrt ImageBuilder 24.10.3
+        run: |
+          wget https://downloads.openwrt.org/releases/24.10.3/targets/ipq40xx/generic/openwrt-imagebuilder-24.10.3-ipq40xx-generic.Linux-x86_64.tar.xz
           tar -xf openwrt-imagebuilder-*.tar.xz
           mv openwrt-imagebuilder-* imagebuilder
 
       - name: Copy custom files
         run: |
           mkdir -p imagebuilder/files
-          cp -r files/* imagebuilder/files/ || true
+          cp -r files/* imagebuilder/files/
 
       - name: Build firmware
         run: |
@@ -29,7 +34,7 @@ jobs:
             PACKAGES="luci luci-compat luci-app-passwall luci-app-passwall2 luci-app-openvpn luci-app-wireguard luci-app-wol luci-app-openconnect luci-app-amnezia luci-theme-bootstrap" \
             FILES=files/
 
-      - name: Upload firmware
+      - name: Upload firmware artifact
         uses: actions/upload-artifact@v4
         with:
           name: firmware
